@@ -1,7 +1,7 @@
 import scala.util.{Random}
 
 /*
-Distribute turn for an Agile brainstorming exercice
+Each Post-IT must have n notes given by n different person
  */
 object Brainstorming extends App {
 
@@ -20,14 +20,13 @@ object Brainstorming extends App {
     "people L"
   )
 
-  val turnNumber = 4
-
   val peopleMatrix:Seq[Seq[Int]] = Seq(
     Seq(Random.shuffle((0 until people.length).toList):_*)
   )
 
-  buildMatrix(peopleMatrix) match {
-    case None => println("Try again")
+  //Build a 4 times matrix (4 notes by Post-IT)
+  buildMatrix(peopleMatrix, 4) match {
+    case None => println("Try again...")
     case Some(s) => for (j <- 0 until s(0).length) {
       println( (for (i <- 0 until s.length) yield people(s(i)(j))) mkString (" -> ") )
     }
@@ -36,11 +35,11 @@ object Brainstorming extends App {
   /*
   Build matrix by adding n turn to the first column
    */
-  def buildMatrix(sourceMatrix: Seq[Seq[Int]]): Option[Seq[Seq[Int]]] = {
+  def buildMatrix(sourceMatrix: Seq[Seq[Int]], turnNumber: Int): Option[Seq[Seq[Int]]] = {
     if (sourceMatrix.length <= turnNumber) {
       getNextTurn(sourceMatrix) match {
         case None => None
-        case Some(s) => buildMatrix(sourceMatrix :+ s)
+        case Some(s) => buildMatrix(sourceMatrix :+ s, turnNumber)
       }
     } else {
       Some(sourceMatrix)
