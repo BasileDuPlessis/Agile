@@ -60,7 +60,9 @@ object Brainstorming extends App {
     val key = getRandomIntFromZeroUntilMaxExceptInList(length, result.keys.toList)
 
     key match {
+      //Return result as a Seq of values
       case None => Some(result.toSeq.sortBy(_._1).map(_._2).toIndexedSeq)
+      //Create a pair for next available key
       case Some(k) =>
         //get line
         val line = (0 until sourceMatrix.length).map(sourceMatrix(_)(k))
