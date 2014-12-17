@@ -1,4 +1,4 @@
-import scala.util.{Random}
+import scala.util.{Try, Random}
 
 /*
 Each Post-IT must have n notes given by n different person
@@ -20,15 +20,16 @@ object Brainstorming extends App {
     "people L"
   )
 
+  //First column is randomly built
   val peopleMatrix:Seq[Seq[Int]] = Seq(
     Seq(Random.shuffle((0 until people.length).toList):_*)
   )
 
   //Build a 4 times matrix (4 notes by Post-IT)
   buildMatrix(peopleMatrix, 4) match {
-    case None => println("Try again...")
+    case None => println("An error occurs, please try again...")
     case Some(s) => for (j <- 0 until s(0).length) {
-      println( (for (i <- 0 until s.length) yield people(s(i)(j))) mkString (" -> ") )
+      println( (for (i <- 0 until s.length) yield people(s(i)(j))) mkString " -> " )
     }
   }
 
@@ -37,7 +38,7 @@ object Brainstorming extends App {
    */
   def buildMatrix(sourceMatrix: Seq[Seq[Int]], turnNumber: Int): Option[Seq[Seq[Int]]] = {
     if (sourceMatrix.length <= turnNumber) {
-      getNextTurn(sourceMatrix) match {
+      Try {getNextTurn(sourceMatrix)} getOrElse None match {
         case None => None
         case Some(s) => buildMatrix(sourceMatrix :+ s, turnNumber)
       }
@@ -59,11 +60,8 @@ object Brainstorming extends App {
     val key = getRandomIntFromZeroUntilMaxExceptInList(length, result.keys.toList)
 
     key match {
-      case None => {
-        Some(result.toSeq.sortBy(_._1).map(_._2).toIndexedSeq)
-      }
-      case Some(k) => {
-
+      case None => Some(result.toSeq.sortBy(_._1).map(_._2).toIndexedSeq)
+      case Some(k) =>
         //get line
         val line = (0 until sourceMatrix.length).map(sourceMatrix(_)(k))
 
@@ -72,7 +70,7 @@ object Brainstorming extends App {
 
         value match {
           case None => None
-          case Some(v) => {
+          case Some(v) =>
             //add pair
             val valuePair = sourceMatrix.last(k)
             val keyPair = sourceMatrix.last.indexOf(v)
@@ -82,8 +80,6 @@ object Brainstorming extends App {
               case _ => getNextTurn(sourceMatrix, result ++ Map(k -> v, keyPair -> valuePair))
             }
 
-          }
-        }
 
       }
     }
