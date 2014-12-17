@@ -20,17 +20,22 @@ object Brainstorming extends App {
     "people L"
   )
 
+  //Get max name length to align printing
+  val maxLength = people.maxBy(_.length).length
+
   //First column is randomly built
   val peopleMatrix:Seq[Seq[Int]] = Seq(
     Seq(Random.shuffle((0 until people.length).toList):_*)
   )
 
-  //Build a 4 times matrix (4 notes by Post-IT)
-  buildMatrix(peopleMatrix, 4) match {
+  //Build a 3 times matrix (3 notes by Post-IT)
+  buildMatrix(peopleMatrix, 3) match {
     case None => println("An error occurs, please try again...")
-    case Some(s) => for (j <- 0 until s(0).length) {
-      println( (for (i <- 0 until s.length) yield people(s(i)(j))) mkString " -> " )
-    }
+    case Some(s) => {
+      for (j <- 0 until s(0).length) yield {
+        for ( i <- 0 until s.length; p = people(s(i)(j)) ) yield " " * (maxLength - p.length) + p
+      } mkString " - > "
+    } foreach println
   }
 
   /*
